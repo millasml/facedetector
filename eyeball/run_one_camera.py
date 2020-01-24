@@ -46,11 +46,11 @@ def main(camera_id, video_capture):
     try:
         print('* connecting to database...')
         # Fetch the service account key JSON file contents
-        cred = credentials.Certificate("../cloud_database/tech-digital-eyeball-firebase-adminsdk-wjsff-0a91534fba.json")
+        cred = credentials.Certificate("PUT YOUR JSON KEY")
 
         # Initialize the app with a service account, granting admin privileges
         firebase_admin.initialize_app(cred, {
-            'databaseURL': "https://tech-digital-eyeball.firebaseio.com"
+            'databaseURL': "PUT YOUR URL"
         })
 
         # Initialize db document reference
@@ -93,10 +93,10 @@ def main(camera_id, video_capture):
             # Only process every other frame of video to save time
             if process_this_frame:
                 # Find all the faces and face encodings in the current frame of video
-                face_locations = face_recognition.face_locations(rgb_small_frame, number_of_times_to_upsample=1, model = "cnn")
+                # face_locations = face_recognition.face_locations(rgb_small_frame, number_of_times_to_upsample=1, model = "cnn")
                 
                 #version that doesnt kill my xps
-                # face_locations = face_recognition.face_locations(rgb_small_frame)
+                face_locations = face_recognition.face_locations(rgb_small_frame)
                 
                 
                 # print("frame (width, height) is: " + str(video_capture.get(cv2.CAP_PROP_FRAME_WIDTH)) + " , " + str(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT)))
@@ -177,38 +177,39 @@ def main(camera_id, video_capture):
 
                 """start of DATA ENTRY"""
 
-                write_time = datetime.datetime.now()
+                # write_time = datetime.datetime.now()
 
-                delta = write_time - local_last_seen[name]
+                # delta = write_time - local_last_seen[name]
 
-                if (delta.total_seconds() > 60):
+                # if (delta.total_seconds() > 60):
 
-                    retval, buffer = cv2.imencode('.jpg', person_frame)
-                    jpg_as_text = base64.b64encode(buffer)
-                    array = ref.child(face_to_index[name]).get()
+                #     retval, buffer = cv2.imencode('.jpg', person_frame)
+                #     jpg_as_text = base64.b64encode(buffer)
+                #     array = ref.child(face_to_index[name]).get()
            
-                    obj = {
-                        "image": "data:image/jpeg;base64," + jpg_as_text.decode("utf-8"),
-                        "location": camera_id,
-                        "time": format(write_time)
-                    }
-                    array = [obj] + array[:-1]
+                #     obj = {
+                #         "image": "data:image/jpeg;base64," + jpg_as_text.decode("utf-8"),
+                #         "location": camera_id,
+                #         "time": format(write_time)
+                #     }
+                #     array = [obj] + array[:-1]
                     
-                    ref.child(face_to_index[name]).set({
-                        "0" : array[0],
-                        "1" : array[1],
-                        "2" : array[2],
-                        "3" : array[3]
-                    })
+                #     ref.child(face_to_index[name]).set({
+                #         "0" : array[0],
+                #         "1" : array[1],
+                #         "2" : array[2],
+                #         "3" : array[3]
+                #     })
 
-                    local_last_seen[name] = write_time
-                    print("* db updated! " + name + " was added")
+                #     local_last_seen[name] = write_time
+                #     print("* db updated! " + name + " was added")
                     
-                else:
-                    print("* "+ name + " was detected, not time yet! " + str(delta.total_seconds()))
+                # else:
+                #     print("* "+ name + " was detected, not time yet! " + str(delta.total_seconds()))
 
                 """end of DATA ENTRY"""
 
+                print(name, " detected")
             cv2.imshow('Video', cv2.resize(frame, (0, 0), fx=0.50, fy=0.5))
             # cv2.imshow('Video', frame)
 
